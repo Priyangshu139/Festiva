@@ -2,12 +2,23 @@
 
 import { ShoppingCartIcon, UserIcon, ArchiveBoxIcon, MagnifyingGlassIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { cartCount } = useCart();
+  const router = useRouter();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search/${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+    }
+  };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -27,13 +38,15 @@ export default function Header() {
                 <MagnifyingGlassIcon className="h-6 w-6" />
               </button>
               {isSearchOpen && (
-                <div className="absolute right-0 mt-2 w-64">
+                <form onSubmit={handleSearch} className="absolute right-0 mt-2 w-64">
                   <input
                     type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search for products..."
                     className="w-full px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:ring-orange-500 focus:border-orange-500"
                   />
-                </div>
+                </form>
               )}
             </div>
             <a href="/orders" className="p-2 text-gray-700 hover:text-orange-600 hidden md:block">
@@ -71,13 +84,15 @@ export default function Header() {
               <a href="/navratri" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Navratri</a>
               <a href="/orders" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Orders</a>
               <a href="/account" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Account</a>
-               <div className="relative px-3 py-2">
+               <form onSubmit={handleSearch} className="relative px-3 py-2">
                   <input
                     type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search..."
                     className="w-full px-4 py-2 border border-gray-300 rounded-full shadow-sm"
                   />
-                </div>
+                </form>
             </div>
           </div>
         )}
