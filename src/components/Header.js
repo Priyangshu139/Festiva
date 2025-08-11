@@ -1,38 +1,44 @@
 'use client';
 
-import { ShoppingCartIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon, UserIcon, ArchiveBoxIcon, MagnifyingGlassIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
-export default function Header({ cartCount = 0 }) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { cartCount } = useCart();
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold text-orange-600">Festiva</h1>
+            <a href="/" className="text-2xl font-bold text-orange-600">Festiva</a>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <a href="/" className="text-gray-700 hover:text-orange-600 px-3 py-2 text-sm font-medium">
-              Home
-            </a>
-            <a href="/diwali" className="text-gray-700 hover:text-orange-600 px-3 py-2 text-sm font-medium">
-              Diwali
-            </a>
-            <a href="/holi" className="text-gray-700 hover:text-orange-600 px-3 py-2 text-sm font-medium">
-              Holi
-            </a>
-            <a href="/navratri" className="text-gray-700 hover:text-orange-600 px-3 py-2 text-sm font-medium">
-              Navratri
-            </a>
-          </nav>
+        
 
-          {/* Cart Icon */}
-          <div className="flex items-center">
+          {/* Icons */}
+          <div className="flex items-center space-x-4">
+            <div className="relative hidden md:block">
+              <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="p-2 text-gray-700 hover:text-orange-600">
+                <MagnifyingGlassIcon className="h-6 w-6" />
+              </button>
+              {isSearchOpen && (
+                <div className="absolute right-0 mt-2 w-64">
+                  <input
+                    type="text"
+                    placeholder="Search for products..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
+              )}
+            </div>
+            <a href="/orders" className="p-2 text-gray-700 hover:text-orange-600 hidden md:block">
+              <ArchiveBoxIcon className="h-6 w-6" />
+            </a>
             <a href="/cart" className="relative p-2 text-gray-700 hover:text-orange-600">
               <ShoppingCartIcon className="h-6 w-6" />
               {cartCount > 0 && (
@@ -41,15 +47,16 @@ export default function Header({ cartCount = 0 }) {
                 </span>
               )}
             </a>
+            <a href="/account" className="p-2 text-gray-700 hover:text-orange-600 hidden md:block">
+              <UserIcon className="h-6 w-6" />
+            </a>
 
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden ml-4 p-2 text-gray-700"
+              className="md:hidden ml-2 p-2 text-gray-700"
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <Bars3Icon className="h-6 w-6" />
             </button>
           </div>
         </div>
@@ -58,18 +65,19 @@ export default function Header({ cartCount = 0 }) {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <a href="/" className="block px-3 py-2 text-gray-700 hover:text-orange-600">
-                Home
-              </a>
-              <a href="/diwali" className="block px-3 py-2 text-gray-700 hover:text-orange-600">
-                Diwali
-              </a>
-              <a href="/holi" className="block px-3 py-2 text-gray-700 hover:text-orange-600">
-                Holi
-              </a>
-              <a href="/navratri" className="block px-3 py-2 text-gray-700 hover:text-orange-600">
-                Navratri
-              </a>
+              <a href="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Home</a>
+              <a href="/diwali" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Diwali</a>
+              <a href="/holi" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Holi</a>
+              <a href="/navratri" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Navratri</a>
+              <a href="/orders" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Orders</a>
+              <a href="/account" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50">Account</a>
+               <div className="relative px-3 py-2">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-full shadow-sm"
+                  />
+                </div>
             </div>
           </div>
         )}

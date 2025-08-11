@@ -184,7 +184,7 @@ Festiva is a specialized e-commerce platform focused on Indian festival celebrat
 - **Frontend Framework:** Next.js 15.4.6
 - **Styling:** Tailwind CSS v4
 - **Language:** JavaScript (ES6+)
-- **Icons:** google icons
+- **Icons:** @heroicons/react/24/outline
 - **Animations:** Framer Motion for micro-interactions
 - **State Management:** (choose somenhing appropriate for appwrite as backend which i will put later,avoiding hydration issues)
 - **Data:** Static JSON for MVP (no backend)
