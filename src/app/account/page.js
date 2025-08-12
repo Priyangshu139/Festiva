@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 
 import { useState } from 'react';
 import Header from '@/components/Header';
@@ -8,10 +9,11 @@ import { Container, Grid, Typography, TextField, Box, Paper, List, ListItem, Lis
 
 const UserInfo = ({ user, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(user.name);
   const [mobile, setMobile] = useState(user.mobile);
 
   const handleSave = () => {
-    onUpdate({ ...user, mobile });
+    onUpdate({ ...user, name, mobile });
     setIsEditing(false);
   };
 
@@ -25,7 +27,16 @@ const UserInfo = ({ user, onUpdate }) => {
           <Typography variant="body2" color="text.secondary">Full name</Typography>
         </Grid>
         <Grid item xs={12} sm={8}>
-          <Typography variant="body1">{user.name}</Typography>
+          {isEditing ? (
+            <TextField
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              size="small"
+              fullWidth
+            />
+          ) : (
+            <Typography variant="body1">{user.name}</Typography>
+          )}
         </Grid>
         <Grid item xs={12} sm={4}>
           <Typography variant="body2" color="text.secondary">Mobile Number</Typography>
@@ -162,32 +173,58 @@ const AddressForm = ({ address, onSave, onCancel }) => {
 };
 
 export default function AccountPage() {
+  // Fixed: Changed address structure to array of objects instead of strings
   const [user, setUser] = useState({
     name: 'Priya Sharma',
-    email: 'priya.sharma@example.com',
-    mobile: '9876543210',
+    mobile: '9876543210'
   });
+  
+  // Separate addresses state with proper object structure
   const [addresses, setAddresses] = useState([
-    { id: 1, name: 'Priya Sharma', phone: '9876543210', street: '123, Festive Lane', city: 'Mumbai', state: 'Maharashtra', pin: '400001' },
-    { id: 2, name: 'Priya Sharma (Work)', phone: '9876543211', street: '456, Commerce Street', city: 'Mumbai', state: 'Maharashtra', pin: '400051' },
+    {
+      id: 1,
+      name: 'Priya Sharma',
+      phone: '9876543210',
+      street: '123, Festive Lane',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pin: '400001'
+    },
+    {
+      id: 2,
+      name: 'Priya Sharma',
+      phone: '9876543210',
+      street: '456, Commerce Street',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pin: '400051'
+    }
   ]);
+
   const [editingAddress, setEditingAddress] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
 
   const handleUpdateUser = (updatedUser) => setUser(updatedUser);
 
-  const handleSaveAddress = (address) => {
-    if (addresses.find(a => a.id === address.id)) {
-      setAddresses(addresses.map(a => a.id === address.id ? address : a));
+  const handleSaveAddress = (newAddress) => {
+    if (isAdding) {
+      setAddresses(prev => [...prev, newAddress]);
     } else {
-      setAddresses([...addresses, address]);
+      setAddresses(prev => prev.map(addr => 
+        addr.id === newAddress.id ? newAddress : addr
+      ));
     }
     setEditingAddress(null);
     setIsAdding(false);
   };
 
-  const handleDeleteAddress = (id) => {
-    setAddresses(addresses.filter(a => a.id !== id));
+  const handleDeleteAddress = (addressId) => {
+    setAddresses(prev => prev.filter(addr => addr.id !== addressId));
+  };
+
+  const handleEditAddress = (address) => {
+    setEditingAddress(address);
+    setIsAdding(false);
   };
 
   return (
@@ -206,25 +243,25 @@ export default function AccountPage() {
             </Button>
           </Box>
 
-          {isAdding || editingAddress ? (
+          {isAdding || editingAddress !== null ? (
             <AddressForm
               address={editingAddress}
               onSave={handleSaveAddress}
               onCancel={() => { setIsAdding(false); setEditingAddress(null); }}
             />
           ) : (
-            <List>
-              {addresses.map(address => (
+            <Box>
+              {addresses.map((address, index) => (
                 <React.Fragment key={address.id}>
                   <AddressCard
                     address={address}
-                    onEdit={setEditingAddress}
-                    onDelete={handleDeleteAddress}
+                    onEdit={() => handleEditAddress(address)}
+                    onDelete={() => handleDeleteAddress(address.id)}
                   />
-                  {addresses.indexOf(address) < addresses.length - 1 && <Divider />}
+                  {index < addresses.length - 1 && <Divider sx={{ my: 2 }} />}
                 </React.Fragment>
               ))}
-            </List>
+            </Box>
           )}
         </Paper>
       </Container>

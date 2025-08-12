@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import Card, { CardImage, CardContent, CardTitle, CardDescription } from '@/components/Card';
 import Button from '@/components/Button';
 import { useCart } from '@/context/CartContext';
-import { Container, Grid, Typography, Box, Paper } from '@mui/material';
+import { Container, Grid, Typography, Box, Paper, List, ListItem, ListItemText } from '@mui/material';
 
 const diwaliBundles = [
   {

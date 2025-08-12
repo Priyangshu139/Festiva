@@ -14,21 +14,21 @@ const festivals = [
     name: 'Diwali',
     description: 'Festival of Lights - Celebrate with diyas, rangoli, and sweets',
     image: 'https://images.unsplash.com/photo-1574871786514-46e1680ea587?w=400&h=300&fit=crop',
-    href: '/diwali'
+    href: '/festival/diwali'
   },
   {
     id: 'holi',
     name: 'Holi',
     description: 'Festival of Colors - Play with organic colors and enjoy festive treats',
     image: 'https://images.unsplash.com/photo-1610630875035-f9d7bc2c2aed?w=400&h=300&fit=crop',
-    href: '/holi'
+    href: '/festival/holi'
   },
   {
     id: 'navratri',
     name: 'Navratri',
     description: 'Nine Nights of Devotion - Garba, dandiya, and traditional celebrations',
     image: 'https://images.unsplash.com/photo-1608754482805-6f0a3040a8b2?w=400&h=300&fit=crop',
-    href: '/navratri'
+    href: '/festival/navratri'
   }
 ];
 
@@ -37,33 +37,45 @@ const individualItems = [
     id: 'decorative-diya',
     name: 'Decorative Brass Diya',
     description: 'Traditional brass diya with intricate designs',
-    price: 299,
+    tags: [],
+    image: ['https://images.unsplash.com/photo-1603807022287-78de1b3f3a3a?w=300&h=300&fit=crop'],
     rating: 4.5,
-    image: 'https://images.unsplash.com/photo-1603807022287-78de1b3f3a3a?w=300&h=300&fit=crop'
+    distributor: ['Festiva Supplies'],
+    inventory: [100],
+    price: [299]
   },
   {
     id: 'organic-gulal',
     name: 'Organic Gulal Pack',
     description: 'Skin-friendly, non-toxic herbal gulal for Holi',
-    price: 199,
+    tags: [],
+    image: ['https://images.unsplash.com/photo-1610630875035-f9d7bc2c2aed?w=300&h=300&fit=crop'],
     rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1610630875035-f9d7bc2c2aed?w=300&h=300&fit=crop'
+    distributor: ['Festiva Supplies'],
+    inventory: [200],
+    price: [199]
   },
   {
     id: 'toran',
     name: 'Handmade Door Toran',
     description: 'Beautifully crafted toran to adorn your entrance',
-    price: 499,
+    tags: [],
+    image: ['https://images.unsplash.com/photo-1574871786514-46e1680ea587?w=300&h=300&fit=crop'],
     rating: 4.7,
-    image: 'https://images.unsplash.com/photo-1574871786514-46e1680ea587?w=300&h=300&fit=crop'
+    distributor: ['Festiva Supplies'],
+    inventory: [50],
+    price: [499]
   },
   {
     id: 'pooja-thali',
     name: 'Silver Coated Pooja Thali',
     description: 'Elegant thali for all your pooja needs',
-    price: 799,
+    tags: [],
+    image: ['https://images.unsplash.com/photo-1607920591413-4ec007e70023?w=300&h=300&fit=crop'],
     rating: 4.6,
-    image: 'https://images.unsplash.com/photo-1607920591413-4ec007e70023?w=300&h=300&fit=crop'
+    distributor: ['Festiva Supplies'],
+    inventory: [30],
+    price: [799]
   }
 ];
 
@@ -88,7 +100,7 @@ export default function Home() {
 
           <Grid container spacing={4}>
             {festivals.map((festival) => (
-              <Grid item xs={12} md={6} key={festival.id}>
+              <Grid item xs={12} md={12} key={festival.id}>
                 <Card sx={{ height: '100%', transition: 'box-shadow 0.3s', '&:hover': { boxShadow: 4 } }}>
                   <CardImage src={festival.image} alt={festival.name} />
                   <CardContent>
@@ -125,7 +137,7 @@ export default function Home() {
 
           <Grid container spacing={4}>
             {individualItems.map((item) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+              <Grid item xs={12} sm={6} md={6} lg={4} xl={3} key={item.id}>
                 <Card sx={{ height: '100%', transition: 'box-shadow 0.3s', '&:hover': { boxShadow: 4 } }}>
                   <CardImage src={item.image} alt={item.name} sx={{ aspectRatio: '1' }} />
                   <CardContent>
