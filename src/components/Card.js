@@ -1,41 +1,44 @@
-export default function Card({ children, className = '' }) {
+import { Card as MuiCard, CardContent as MuiCardContent, CardMedia, Typography } from '@mui/material';
+
+export default function Card({ children, className = '', ...props }) {
   return (
-    <div className={`bg-white rounded-lg shadow-md overflow-hidden ${className}`}>
+    <MuiCard className={className} {...props}>
       {children}
-    </div>
+    </MuiCard>
   );
 }
 
-export function CardImage({ src, alt }) {
+export function CardImage({ src, alt, ...props }) {
   return (
-    <img
-      src={src}
+    <CardMedia
+      component="img"
+      image={src}
       alt={alt}
-      className="w-full h-48 object-cover"
+      {...props}
     />
   );
 }
 
-export function CardContent({ children, className = '' }) {
+export function CardContent({ children, className = '', ...props }) {
   return (
-    <div className={`p-4 ${className}`}>
+    <MuiCardContent className={className} {...props}>
       {children}
-    </div>
+    </MuiCardContent>
   );
 }
 
-export function CardTitle({ children }) {
+export function CardTitle({ children, ...props }) {
   return (
-    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+    <Typography variant="h5" component="div" gutterBottom {...props}>
       {children}
-    </h3>
+    </Typography>
   );
 }
 
-export function CardDescription({ children }) {
+export function CardDescription({ children, ...props }) {
   return (
-    <p className="text-gray-600 text-sm mb-3">
+    <Typography variant="body2" color="text.secondary" {...props}>
       {children}
-    </p>
+    </Typography>
   );
 }

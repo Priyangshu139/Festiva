@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { Box, IconButton, Typography } from '@mui/material';
+import { ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 
 export default function Carousel({ slides }) {
   const [current, setCurrent] = useState(0);
@@ -26,55 +26,122 @@ export default function Carousel({ slides }) {
   }, [current]);
 
   return (
-    <div className="relative overflow-hidden">
-      <div
-        className="flex transition-transform ease-out duration-500"
-        style={{
+    <Box sx={{ position: 'relative', overflow: 'hidden', height: '400px' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          transition: 'transform 0.5s ease-out',
           transform: `translateX(-${current * 100}%)`,
         }}
       >
         {slides.map((s, i) => (
-          <div key={i} className="w-full flex-shrink-0 relative h-96">
-            <Image
-              src={s.image}
-              alt={s.name}
-              layout="fill"
-              objectFit="cover"
-              className="brightness-75"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4">
-              <h2 className="text-4xl md:text-6xl font-bold">{s.name}</h2>
-              <p className="mt-4 text-lg md:text-xl max-w-2xl">{s.description}</p>
-              <a href={s.href} className="mt-8 px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-full text-lg font-semibold transition-colors">
+          <Box
+            key={i}
+            sx={{
+              minWidth: '100%',
+              position: 'relative',
+              height: '400px',
+              backgroundImage: `url(${s.image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              color: 'white',
+              p: 4,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0, 0, 0, 0.4)',
+              },
+            }}
+          >
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Typography variant="h2" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
+                {s.name}
+              </Typography>
+              <Typography variant="h6" component="p" sx={{ maxWidth: '600px', mb: 4 }}>
+                {s.description}
+              </Typography>
+              <Box
+                component="a"
+                href={s.href}
+                sx={{
+                  px: 4,
+                  py: 2,
+                  bgcolor: 'orange.600',
+                  color: 'white',
+                  textDecoration: 'none',
+                  borderRadius: '24px',
+                  fontWeight: 'medium',
+                  transition: 'background-color 0.3s',
+                  '&:hover': {
+                    bgcolor: 'orange.700',
+                  },
+                }}
+              >
                 Explore {s.name}
-              </a>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         ))}
-      </div>
+      </Box>
 
-      <div className="absolute top-0 h-full w-full flex justify-between items-center text-white px-4">
-        <button onClick={previousSlide} className="bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75">
-          <ChevronLeftIcon className="h-6 w-6" />
-        </button>
-        <button onClick={nextSlide} className="bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75">
-          <ChevronRightIcon className="h-6 w-6" />
-        </button>
-      </div>
+      <IconButton
+        onClick={previousSlide}
+        sx={{
+          position: 'absolute',
+          left: 16,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          bgcolor: 'rgba(0, 0, 0, 0.5)',
+          color: 'white',
+          '&:hover': {
+            bgcolor: 'rgba(0, 0, 0, 0.7)',
+          },
+        }}
+      >
+        <ChevronLeftIcon />
+      </IconButton>
 
-      <div className="absolute bottom-4 right-0 left-0">
-        <div className="flex items-center justify-center gap-2">
-          {slides.map((_, i) => (
-            <div
-              onClick={() => setCurrent(i)}
-              key={"circle" + i}
-              className={`rounded-full w-3 h-3 cursor-pointer ${
-                i === current ? "bg-white" : "bg-gray-400"
-              }`}
-            ></div>
-          ))}
-        </div>
-      </div>
-    </div>
+      <IconButton
+        onClick={nextSlide}
+        sx={{
+          position: 'absolute',
+          right: 16,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          bgcolor: 'rgba(0, 0, 0, 0.5)',
+          color: 'white',
+          '&:hover': {
+            bgcolor: 'rgba(0, 0, 0, 0.7)',
+          },
+        }}
+      >
+        <ChevronRightIcon />
+      </IconButton>
+
+      <Box sx={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 1 }}>
+        {slides.map((_, i) => (
+          <Box
+            key={i}
+            onClick={() => setCurrent(i)}
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              bgcolor: i === current ? 'white' : 'grey.400',
+              cursor: 'pointer',
+            }}
+          />
+        ))}
+      </Box>
+    </Box>
   );
 }

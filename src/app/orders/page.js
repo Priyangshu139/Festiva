@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Button from '@/components/Button';
+import { Container, Grid, Typography, Box, Paper, List, ListItem, ListItemText, Divider, Chip } from '@mui/material';
 
 const mockOrders = [
   {
@@ -34,7 +35,7 @@ const mockOrders = [
       { name: 'Complete Navratri Celebration Bundle', quantity: 1 },
     ],
   },
-    {
+  {
     id: 'FEST-004',
     date: '28 Jul 2025',
     status: 'Cancelled',
@@ -47,71 +48,92 @@ const mockOrders = [
 ];
 
 const statusColors = {
-  Processing: 'bg-yellow-100 text-yellow-800',
-  Shipped: 'bg-blue-100 text-blue-800',
-  Delivered: 'bg-green-100 text-green-800',
-  Cancelled: 'bg-red-100 text-red-800',
+  Processing: { bgcolor: 'warning.light', color: 'warning.dark' },
+  Shipped: { bgcolor: 'info.light', color: 'info.dark' },
+  Delivered: { bgcolor: 'success.light', color: 'success.dark' },
+  Cancelled: { bgcolor: 'error.light', color: 'error.dark' },
 };
 
 const OrderCard = ({ order }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white shadow sm:rounded-lg">
-      <div className="p-4 sm:p-6 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-orange-600">Order #{order.id}</p>
-            <p className="text-sm text-gray-500">Placed on {order.date}</p>
-          </div>
-          <div className="text-right">
-            <p className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[order.status]}`}>
-              {order.status}
-            </p>
-            <p className="text-lg font-semibold text-gray-900 mt-1">₹{order.total}</p>
-          </div>
-        </div>
-      </div>
+    <Paper sx={{ mb: 3 }}>
+      <Box sx={{ p: 3, cursor: 'pointer' }} onClick={() => setIsExpanded(!isExpanded)}>
+        <Grid container alignItems="center" justifyContent="space-between">
+          <Grid item>
+            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+              Order #{order.id}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Placed on {order.date}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Chip
+              label={order.status}
+              sx={{
+                bgcolor: statusColors[order.status].bgcolor,
+                color: statusColors[order.status].color,
+                fontWeight: 'medium',
+              }}
+              size="small"
+            />
+            <Typography variant="h6" sx={{ mt: 1, textAlign: 'right' }}>
+              ₹{order.total}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Box>
+
       {isExpanded && (
-        <div className="border-t border-gray-200 p-4 sm:p-6">
-          <h4 className="font-medium text-gray-900">Items in this order:</h4>
-          <ul role="list" className="mt-2 divide-y divide-gray-200">
+        <Box sx={{ borderTop: 1, borderColor: 'divider', p: 3 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Items in this order:
+          </Typography>
+          <List>
             {order.items.map((item, index) => (
-              <li key={index} className="py-2 flex justify-between">
-                <span className="text-sm text-gray-600">{item.name}</span>
-                <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
-              </li>
+              <ListItem key={index} sx={{ px: 0 }}>
+                <ListItemText
+                  primary={item.name}
+                  secondary={`Qty: ${item.quantity}`}
+                />
+              </ListItem>
             ))}
-          </ul>
-        </div>
+          </List>
+        </Box>
       )}
-    </div>
+    </Paper>
   );
 };
 
 export default function OrdersPage() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Header />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Orders</h1>
-        
+      <Container maxWidth="md" sx={{ py: 6 }}>
+        <Typography variant="h3" component="h1" gutterBottom>
+          Your Orders
+        </Typography>
+
         {mockOrders.length === 0 ? (
-          <div className="text-center py-16 bg-white shadow sm:rounded-lg">
-            <p className="text-xl text-gray-600 mb-4">You have no past orders.</p>
-            <Button onClick={() => window.location.href = '/'}>
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              You have no past orders.
+            </Typography>
+            <Button onClick={() => window.location.href = '/'} variant="contained">
               Start Shopping
             </Button>
-          </div>
+          </Box>
         ) : (
-          <div className="space-y-6">
+          <Box>
             {mockOrders.map(order => (
               <OrderCard key={order.id} order={order} />
             ))}
-          </div>
+          </Box>
         )}
-      </main>
+      </Container>
       <Footer />
-    </div>
+    </Box>
   );
 }

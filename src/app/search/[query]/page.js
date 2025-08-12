@@ -7,8 +7,8 @@ import Footer from '@/components/Footer';
 import Card, { CardImage, CardContent, CardTitle, CardDescription } from '@/components/Card';
 import Button from '@/components/Button';
 import { useCart } from '@/context/CartContext';
-import { Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { Container, Grid, Typography, Box, Paper, FormControlLabel, Checkbox, Menu, MenuItem, Chip } from '@mui/material';
+import { ExpandMore as ChevronDownIcon } from '@mui/icons-material';
 
 // Mock data - in a real app, this would come from an API
 const allItems = [
@@ -23,7 +23,6 @@ const allItems = [
   { type: 'Item', id: 'pooja-thali', name: 'Silver Coated Pooja Thali', description: 'Elegant thali for pooja', price: 799, rating: 4.6, image: 'https://images.unsplash.com/photo-1607920591413-4ec007e70023?w=400&h=300&fit=crop' },
 ];
 
-
 export default function SearchPage() {
   const params = useParams();
   const { addToCart } = useCart();
@@ -34,6 +33,7 @@ export default function SearchPage() {
     Item: true,
   });
   const [sortOrder, setSortOrder] = useState('relevance');
+  const [sortAnchorEl, setSortAnchorEl] = useState(null);
 
   const handleFilterChange = (e) => {
     const { name, checked } = e.target;
@@ -70,133 +70,136 @@ export default function SearchPage() {
   }, [params.query, filters, sortOrder]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Header />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="border-b border-gray-200 pb-4 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h3" component="h1" gutterBottom>
             Search Results {searchTerm && `for "${searchTerm}"`}
-          </h1>
-          <p className="text-gray-600">
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
             {searchResults.length} {searchResults.length === 1 ? 'result' : 'results'} found.
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <Grid container spacing={4}>
           {/* Filters */}
-          <aside className="lg:col-span-1">
-            <div className="sticky top-24">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter by Type</h3>
-              <div className="space-y-2">
+          <Grid item xs={12} md={3}>
+            <Paper sx={{ p: 3, position: 'sticky', top: 80 }}>
+              <Typography variant="h6" gutterBottom>
+                Filter by Type
+              </Typography>
+              <Box>
                 {Object.keys(filters).map(filter => (
-                  <div key={filter} className="flex items-center">
-                    <input
-                      id={`filter-${filter}`}
-                      name={filter}
-                      type="checkbox"
-                      checked={filters[filter]}
-                      onChange={handleFilterChange}
-                      className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                    />
-                    <label htmlFor={`filter-${filter}`} className="ml-3 text-sm text-gray-600">
-                      {filter}
-                    </label>
-                  </div>
+                  <FormControlLabel
+                    key={filter}
+                    control={
+                      <Checkbox
+                        checked={filters[filter]}
+                        onChange={handleFilterChange}
+                        name={filter}
+                        color="primary"
+                      />
+                    }
+                    label={filter}
+                  />
                 ))}
-              </div>
+              </Box>
 
-              <h3 className="text-lg font-semibold text-gray-900 mt-8 mb-4">Sort by</h3>
-              <Menu as="div" className="relative inline-block text-left w-full">
-                <div>
-                  <Menu.Button className="inline-flex w-full justify-between gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                    {sortOrder.replace('-', ' ')}
-                    <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </Menu.Button>
-                </div>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button onClick={() => setSortOrder('relevance')} className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'} block w-full text-left px-4 py-2 text-sm`}>Relevance</button>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button onClick={() => setSortOrder('price-asc')} className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'} block w-full text-left px-4 py-2 text-sm`}>Price: Low to High</button>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button onClick={() => setSortOrder('price-desc')} className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'} block w-full text-left px-4 py-2 text-sm`}>Price: High to Low</button>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button onClick={() => setSortOrder('rating-desc')} className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'} block w-full text-left px-4 py-2 text-sm`}>Rating</button>
-                        )}
-                      </Menu.Item>
-                    </div>
-                  </Menu.Items>
-                </Transition>
+              <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
+                Sort by
+              </Typography>
+              <Button
+                variant="outlined"
+                onClick={(e) => setSortAnchorEl(e.currentTarget)}
+                endIcon={<ChevronDownIcon />}
+                fullWidth
+              >
+                {sortOrder.replace('-', ' ')}
+              </Button>
+              <Menu
+                anchorEl={sortAnchorEl}
+                open={Boolean(sortAnchorEl)}
+                onClose={() => setSortAnchorEl(null)}
+              >
+                <MenuItem onClick={() => { setSortOrder('relevance'); setSortAnchorEl(null); }}>Relevance</MenuItem>
+                <MenuItem onClick={() => { setSortOrder('price-asc'); setSortAnchorEl(null); }}>Price: Low to High</MenuItem>
+                <MenuItem onClick={() => { setSortOrder('price-desc'); setSortAnchorEl(null); }}>Price: High to Low</MenuItem>
+                <MenuItem onClick={() => { setSortOrder('rating-desc'); setSortAnchorEl(null); }}>Rating</MenuItem>
               </Menu>
-            </div>
-          </aside>
+            </Paper>
+          </Grid>
 
           {/* Results */}
-          <div className="lg:col-span-3">
+          <Grid item xs={12} md={9}>
             {searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+              <Grid container spacing={3}>
                 {searchResults.map((item) => (
-                  <Card key={item.id} className="hover:shadow-lg transition-shadow">
-                    <CardImage src={item.image} alt={item.name} className={item.type === 'Item' ? 'aspect-square' : ''} />
-                    <CardContent>
-                      <div className="flex justify-between items-center">
-                        <CardTitle>{item.name}</CardTitle>
-                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${item.type === 'Festival' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-                          {item.type}
-                        </span>
-                      </div>
-                      <CardDescription>{item.description}</CardDescription>
-                      {item.type === 'Item' ? (
-                        <>
-                          <div className="flex justify-between items-center mt-4">
-                            <p className="text-xl font-bold text-gray-900">₹{item.price}</p>
-                            <div className="flex items-center">
-                              <span className="text-yellow-500">★</span>
-                              <span className="ml-1 text-gray-600">{item.rating}</span>
-                            </div>
-                          </div>
-                          <Button onClick={() => addToCart(item)} className="w-full mt-4">
-                            Add to Cart
+                  <Grid item xs={12} sm={6} md={4} key={item.id}>
+                    <Card sx={{ height: '100%', transition: 'box-shadow 0.3s', '&:hover': { boxShadow: 4 } }}>
+                      <CardImage src={item.image} alt={item.name} sx={item.type === 'Item' ? { aspectRatio: '1' } : {}} />
+                      <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <CardTitle>{item.name}</CardTitle>
+                          <Chip
+                            label={item.type}
+                            size="small"
+                            color={item.type === 'Festival' ? 'primary' : 'success'}
+                          />
+                        </Box>
+                        <CardDescription>{item.description}</CardDescription>
+                        {item.type === 'Item' ? (
+                          <>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                              <Typography variant="h6" component="p" sx={{ fontWeight: 'bold' }}>
+                                ₹{item.price}
+                              </Typography>
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                                  ★
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  {item.rating}
+                                </Typography>
+                              </Box>
+                            </Box>
+                            <Button
+                              onClick={() => addToCart(item)}
+                              variant="contained"
+                              color="primary"
+                              fullWidth
+                              sx={{ mt: 2 }}
+                            >
+                              Add to Cart
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            onClick={() => window.location.href = item.href}
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            sx={{ mt: 2 }}
+                          >
+                            Explore {item.name}
                           </Button>
-                        </>
-                      ) : (
-                        <Button onClick={() => window.location.href = item.href} className="w-full mt-4">
-                          Explore {item.name}
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 ))}
-              </div>
+              </Grid>
             ) : (
-              <div className="text-center py-16">
-                <p className="text-xl text-gray-600">No results found for your search.</p>
-              </div>
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <Typography variant="h6" color="text.secondary">
+                  No results found for your search.
+                </Typography>
+              </Box>
             )}
-          </div>
-        </div>
-      </main>
+          </Grid>
+        </Grid>
+      </Container>
       <Footer />
-    </div>
+    </Box>
   );
 }

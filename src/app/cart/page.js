@@ -4,95 +4,110 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Button from '@/components/Button';
 import { useCart } from '@/context/CartContext';
-import Image from 'next/image';
+import { Container, Grid, Typography, Box, Paper, TextField, List, ListItem, ListItemText, Divider } from '@mui/material';
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Header />
-      
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Cart</h1>
+
+      <Container maxWidth="md" sx={{ py: 6 }}>
+        <Typography variant="h3" component="h1" gutterBottom>
+          Your Cart
+        </Typography>
 
         {cartItems.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-xl text-gray-600 mb-4">Your cart is empty.</p>
-            <Button onClick={() => window.location.href = '/'}>
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              Your cart is empty.
+            </Typography>
+            <Button onClick={() => window.location.href = '/'} variant="contained">
               Continue Shopping
             </Button>
-          </div>
+          </Box>
         ) : (
-          <div>
-            <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-              <ul role="list" className="divide-y divide-gray-200">
-                {cartItems.map((item) => (
-                  <li key={item.id} className="px-4 py-4 sm:px-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-24 w-24 rounded-md overflow-hidden">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          width={96}
-                          height={96}
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="ml-4 flex-1 flex flex-col">
-                        <div>
-                          <div className="flex justify-between text-base font-medium text-gray-900">
-                            <h3>{item.name}</h3>
-                            <p className="ml-4">₹{item.price * item.quantity}</p>
-                          </div>
-                        </div>
-                        <div className="flex-1 flex items-end justify-between text-sm">
-                          <div className="flex items-center">
-                            <label htmlFor={`quantity-${item.id}`} className="mr-2">Qty:</label>
-                            <input
-                              id={`quantity-${item.id}`}
-                              type="number"
-                              min="1"
-                              value={item.quantity}
-                              onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
-                              className="w-16 border-gray-300 rounded-md"
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={8}>
+              <Paper sx={{ p: 4 }}>
+                <List>
+                  {cartItems.map((item) => (
+                    <React.Fragment key={item.id}>
+                      <ListItem sx={{ py: 2 }}>
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid item xs={4} md={3}>
+                            <Box
+                              component="img"
+                              src={item.image}
+                              alt={item.name}
+                              sx={{ width: '100%', height: 'auto', borderRadius: 1 }}
                             />
-                          </div>
-                          <div className="flex">
-                            <button
-                              type="button"
-                              onClick={() => removeFromCart(item.id)}
-                              className="font-medium text-orange-600 hover:text-orange-500"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                          </Grid>
+                          <Grid item xs={8} md={9}>
+                            <ListItemText
+                              primary={item.name}
+                              secondary={
+                                <>
+                                  <Typography component="span" variant="body2" color="text.primary">
+                                    ₹{item.price * item.quantity}
+                                  </Typography>
+                                  <Box sx={{ mt: 1 }}>
+                                    <TextField
+                                      label="Quantity"
+                                      type="number"
+                                      value={item.quantity}
+                                      onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
+                                      inputProps={{ min: 1 }}
+                                      size="small"
+                                      sx={{ width: 80, mr: 2 }}
+                                    />
+                                    <Button
+                                      onClick={() => removeFromCart(item.id)}
+                                      variant="text"
+                                      color="error"
+                                      size="small"
+                                    >
+                                      Remove
+                                    </Button>
+                                  </Box>
+                                </>
+                              }
+                            />
+                          </Grid>
+                        </Grid>
+                      </ListItem>
+                      <Divider />
+                    </React.Fragment>
+                  ))}
+                </List>
+              </Paper>
+            </Grid>
 
-            <div className="mt-8 text-right">
-              <p className="text-2xl font-bold text-gray-900">
-                Subtotal: ₹{cartTotal}
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                Shipping and taxes calculated at checkout.
-              </p>
-              <div className="mt-6">
-                <Button className="w-full sm:w-auto">
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 4, height: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  Order Summary
+                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                  <Typography variant="body1">Subtotal:</Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    ₹{cartTotal}
+                  </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Shipping and taxes calculated at checkout.
+                </Typography>
+                <Button variant="contained" fullWidth>
                   Checkout
                 </Button>
-              </div>
-            </div>
-          </div>
+              </Paper>
+            </Grid>
+          </Grid>
         )}
-      </main>
+      </Container>
 
       <Footer />
-    </div>
+    </Box>
   );
 }
