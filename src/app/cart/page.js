@@ -7,7 +7,7 @@ import { useCart } from '@/context/CartContext';
 import { Container, Grid, Typography, Box, Paper, TextField, List, ListItem, ListItemText, Divider } from '@mui/material';
 
 export default function CartPage() {
-  const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { bundle, item, total, quantity, removeFromCart, updateQuantity } = useCart();
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -18,7 +18,7 @@ export default function CartPage() {
           Your Cart
         </Typography>
 
-        {cartItems.length === 0 ? (
+        {item.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
               Your cart is empty.
@@ -32,38 +32,38 @@ export default function CartPage() {
             <Grid item xs={12} md={8}>
               <Paper sx={{ p: 4 }}>
                 <List>
-                  {cartItems.map((item) => (
-                    <React.Fragment key={item.id}>
+                  {item.map((itemName, index) => (
+                    <React.Fragment key={index}>
                       <ListItem sx={{ py: 2 }}>
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={4} md={3}>
                             <Box
                               component="img"
-                              src={item.image}
-                              alt={item.name}
+                              src={'https://via.placeholder.com/150'} // Replace with actual image
+                              alt={itemName}
                               sx={{ width: '100%', height: 'auto', borderRadius: 1 }}
                             />
                           </Grid>
                           <Grid item xs={8} md={9}>
                             <ListItemText
-                              primary={item.name}
+                              primary={itemName}
                               secondary={
                                 <>
                                   <Typography component="span" variant="body2" color="text.primary">
-                                    ₹{item.price * item.quantity}
+                                    ₹{bundle[index]?.price * quantity[index]}
                                   </Typography>
                                   <Box sx={{ mt: 1 }}>
                                     <TextField
                                       label="Quantity"
                                       type="number"
-                                      value={item.quantity}
-                                      onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
+                                      value={quantity[index]}
+                                      onChange={(e) => updateQuantity(itemName, parseInt(e.target.value))}
                                       inputProps={{ min: 1 }}
                                       size="small"
                                       sx={{ width: 80, mr: 2 }}
                                     />
                                     <Button
-                                      onClick={() => removeFromCart(item.id)}
+                                      onClick={() => removeFromCart(itemName)}
                                       variant="text"
                                       color="error"
                                       size="small"
@@ -92,7 +92,7 @@ export default function CartPage() {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="body1">Subtotal:</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                    ₹{cartTotal}
+                    ₹{total}
                   </Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>

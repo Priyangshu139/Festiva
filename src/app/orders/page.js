@@ -8,42 +8,52 @@ import { Container, Grid, Typography, Box, Paper, List, ListItem, ListItemText, 
 
 const mockOrders = [
   {
-    id: 'FEST-001',
-    date: '10 Aug 2025',
-    status: 'Delivered',
+    phone: '9876543210',
+    bundle: ['Complete Diwali Bundle'],
+    item: ['Decorative Brass Diya'],
     total: 1748,
-    items: [
-      { name: 'Complete Diwali Bundle', quantity: 1 },
-      { name: 'Decorative Brass Diya', quantity: 1 },
-    ],
+    quantity: [1, 1],
+    distributorPhone: '9988776655',
+    address: '123 Main St, Mumbai, India',
+    status: 'Delivered',
+    date: '10 Aug 2025',
+    transactionId: 'TXN1234567890',
   },
   {
-    id: 'FEST-002',
-    date: '05 Aug 2025',
-    status: 'Shipped',
+    phone: '9876543210',
+    bundle: ['Complete Holi Bash Bundle'],
+    item: [],
     total: 1499,
-    items: [
-      { name: 'Complete Holi Bash Bundle', quantity: 1 },
-    ],
+    quantity: [1],
+    distributorPhone: '9988776655',
+    address: '123 Main St, Mumbai, India',
+    status: 'Shipped',
+    date: '05 Aug 2025',
+    transactionId: 'TXN1234567891',
   },
   {
-    id: 'FEST-003',
-    date: '01 Aug 2025',
-    status: 'Processing',
+    phone: '9876543210',
+    bundle: ['Complete Navratri Celebration Bundle'],
+    item: [],
     total: 3499,
-    items: [
-      { name: 'Complete Navratri Celebration Bundle', quantity: 1 },
-    ],
+    quantity: [1],
+    distributorPhone: '9988776655',
+    address: '123 Main St, Mumbai, India',
+    status: 'Processing',
+    date: '01 Aug 2025',
+    transactionId: 'TXN1234567892',
   },
   {
-    id: 'FEST-004',
-    date: '28 Jul 2025',
-    status: 'Cancelled',
+    phone: '9876543210',
+    bundle: [],
+    item: ['Traditional Diya Set', 'Rangoli Kit'],
     total: 848,
-    items: [
-      { name: 'Traditional Diya Set', quantity: 1 },
-      { name: 'Rangoli Kit', quantity: 1 },
-    ],
+    quantity: [1, 1],
+    distributorIndex: [0],
+    address: '123 Main St, Mumbai, India',
+    status: 'Cancelled',
+    date: '28 Jul 2025',
+    transactionId: 'TXN1234567893',
   },
 ];
 
@@ -63,7 +73,7 @@ const OrderCard = ({ order }) => {
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-              Order #{order.id}
+              Order #{order.transactionId}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Placed on {order.date}
@@ -92,15 +102,26 @@ const OrderCard = ({ order }) => {
             Items in this order:
           </Typography>
           <List>
-            {order.items.map((item, index) => (
+            {[...order.bundle, ...order.item].map((item, index) => (
               <ListItem key={index} sx={{ px: 0 }}>
                 <ListItemText
-                  primary={item.name}
-                  secondary={`Qty: ${item.quantity}`}
+                  primary={item}
+                  secondary={`Qty: ${order.quantity[index]}`}
                 />
               </ListItem>
             ))}
           </List>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Address:</strong> {order.address}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Distributor Index:</strong> {order.distributorIndex.join(', ')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Your Phone:</strong> {order.phone}
+            </Typography>
+          </Box>
         </Box>
       )}
     </Paper>
@@ -128,7 +149,7 @@ export default function OrdersPage() {
         ) : (
           <Box>
             {mockOrders.map(order => (
-              <OrderCard key={order.id} order={order} />
+              <OrderCard key={order.transactionId} order={order} />
             ))}
           </Box>
         )}

@@ -9,46 +9,86 @@ export function useCart() {
 }
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [cart, setCart] = useState({
+      phone: '',
+      bundle: [],
+      item: [],
+      total: 0,
+      quantity: [],
+      distributorIndex: []
+    });
 
   const addToCart = (item) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(i => i.id === item.id);
-      if (existingItem) {
-        return prevItems.map(i =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
+    setCart(prevCart => {
+      const existingItemIndex = prevCart.item.indexOf(item.name);
+      if (existingItemIndex !== -1) {
+        const newQuantity = [...prevCart.quantity];
+        newQuantity[existingItemIndex] += 1;
+        return {
+          ...prevCart,
+          quantity: newQuantity,
+          total: prevCart.total + item.price
+        };
       }
-      return [...prevItems, { ...item, quantity: 1 }];
+
+      return {
+        ...prevCart,
+        bundle: [...prevCart.bundle, item.name],
+        item: [...prevCart.item, item.name],
+        quantity: [...prevCart.quantity, 1],
+        total: prevCart.total + item.price
+      };
     });
   };
 
-  const removeFromCart = (itemId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
+  const removeFromCart = (itemName) => {
+    setCart(prevCart => {
+      const itemIndex = prevCart.item.indexOf(itemName);
+      if (itemIndex === -1) return prevCart;
+
+      const newQuantity = [...prevCart.quantity];
+      const newTotal = prevCart.total - prevCart.bundle[itemIndex].price * newQuantity[itemIndex];
+
+      return {
+        ...prevCart,
+        bundle: prevCart.bundle.filter((_, i) => i !== itemIndex),
+        item: prevCart.item.filter((_, i) => i !== itemIndex),
+        quantity: prevCart.quantity.filter((_, i) => i !== itemIndex),
+        total: newTotal
+      };
+    });
   };
 
-  const updateQuantity = (itemId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(itemId);
-    } else {
-      setCartItems(prevItems =>
-        prevItems.map(item =>
-          item.id === itemId ? { ...item, quantity } : item
-        )
-      );
-    }
+  const updateQuantity = (itemName, quantity) => {
+    setCart(prevCart => {
+      const itemIndex = prevCart.item.indexOf(itemName);
+      if (itemIndex === -1) return prevCart;
+
+      const newQuantity = [...prevCart.quantity];
+      newQuantity[itemIndex] = quantity;
+
+      const priceDifference = prevCart.bundle[itemIndex].price * (quantity - prevCart.quantity[itemIndex]);
+      const newTotal = prevCart.total + priceDifference;
+
+      return {
+        ...prevCart,
+        quantity: newQuantity,
+        total: newTotal
+      };
+    });
   };
 
-  const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
-  const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const setPhoneNumber = (phone) => {
+    setCart(prevCart => ({ ...prevCart, phone }));
+  };
 
   const value = {
-    cartItems,
+    ...cart,
     addToCart,
     removeFromCart,
     updateQuantity,
-    cartCount,
-    cartTotal,
+    setPhoneNumber,
+    cartCount: cart.quantity.reduce((count, qty) => count + qty, 0)
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
